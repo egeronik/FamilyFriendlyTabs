@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FamilyFriendlyTabs</string>
+    <string name="action_settings">Settings</string>
+    <string name="level_button_text">Play</string>
+    <string name="puzzle_name">Puzzle 1</string>
+    <string name="large_text">Pog</string>
+</resources>
