@@ -1,6 +1,7 @@
 package com.example.familyfriendlytabs;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -17,90 +18,98 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.familyfriendlytabs.databinding.ActivityScrollingBinding;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class ScrollingActivity extends AppCompatActivity {
+
+    private static String TAG = "ScrollingActivity";
 
     private ActivityScrollingBinding binding;
 
+    boolean oneMode = false;
 
+    ArrayList<String> names;
+    ArrayList<String> nude;
+
+
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityScrollingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        String[] lvlNames = {"asd","asdas"};
+//        Toolbar toolbar = binding.toolbar;
+//        setSupportActionBar(toolbar);
+//        toolbar.setTitle(getTitle());
+        listView = findViewById(R.id.lvlNameView);
+        names = new ArrayList<String>(
+                Arrays.asList("LolWTF",
+                        "Белый синий",
+                        "Ловушка",
+                        "Байт",
+                        "Движение броуна",
+                        "Кринж",
+                        "Дуплет",
+                        "17.6+",
+                        "Сенко",
+                        "Mda starou",
+                        "17.8+")
+        );
+        nude = new ArrayList<String>(
+                Arrays.asList("Не надо, семпай",
+                        "Заправка",
+                        "Megane",
+                        "Даблкилл",
+                        "Blindfold",
+                        "Сахарная пудра",
+                        "Вареник со смятаной",
+                        "Смотри в глаза")
+        );
 
-
-        Toolbar toolbar = binding.toolbar;
-        setSupportActionBar(toolbar);
-        toolbar.setTitle(getTitle());
-//        Button playButton = findViewById(R.id.PlayButton);
-//        playButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                playLevel();
-//            }
-//        });
-
-        LinearLayout linearLayout = findViewById(R.id.linearLayout);
-        for (int i = 0; i < linearLayout.getChildCount(); i++) {
-            Log.d("P",String.valueOf(linearLayout.getChildCount()));
-            LinearLayout layout = (LinearLayout) linearLayout.getChildAt(0);
-            Button button = (Button) layout.getChildAt(2);
-            button.setText("Poggers");
-            button.setOnClickListener(new View.OnClickListener() {
+        Switch sw = findViewById(R.id.oneHandSwitch);
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-                playLevel("P1");
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    oneMode = true;
+                    Toast toast = Toast.makeText(getApplicationContext(),"Включен режим управления одной рукой", Toast.LENGTH_LONG);
+                    toast.show();
+                    populateListView();
+                } else {
+                    oneMode = false;
+                    Toast toast = Toast.makeText(getApplicationContext(),"Режим управления одной рукой выключен", Toast.LENGTH_LONG);
+                    toast.show();
+                    populateListView();
+                }
             }
         });
-        }
+        populateListView();
+    }
 
 
-
+    public void populateListView() {
+        Log.d("ListDataActivity", "populateListView: dispalying data in listView");
+        ArrayList<String> cur = new ArrayList<>();
+        cur.addAll(names);
+        if(oneMode)
+            cur.addAll(nude);
+        myListAdapter adapter = new myListAdapter(this, R.layout.recycl_item, cur, names.size());
+        Log.d(TAG, this.toString());
+        listView.setAdapter(adapter);
 
     }
 
 
-    private void playLevel(String lvl) {
-        Intent playLevelIntent = new Intent(this,PuzzleActivity.class);
-        playLevelIntent.putExtra("LevelName",lvl);
-        startActivity(playLevelIntent);
-    }
 }
-//        FloatingActionButton fab = binding.fab;
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-//    }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_scrolling, menu);
-//        return true;
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }

@@ -8,10 +8,12 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,16 +35,19 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
     TableLayout tableLayout;
     List<ArrayList<Drawable>> pieces;
 
+    List<ArrayList<Integer>> ides;
+
 
     private List<ArrayList<Drawable>> makeDrawabls(String folderName) {
         Random random = new Random();
         List<ArrayList<Drawable>> ans = new ArrayList<>();
+        ides = new ArrayList<>();
         HashSet<Integer> st = new HashSet<>();
         String imagePattern = "image_part_0";
         int imgNum = 1;
         for (int i = 0; i < 4; i++) {
             ArrayList<Drawable> tmp = new ArrayList<>();
-
+            ArrayList<Integer> tmpID = new ArrayList<>();
             for (int j = 0; j < 4; j++) {
                 String imageName;
                 if (i == 3 && j == 3) {
@@ -65,14 +70,17 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
                 try (InputStream inputStream = getApplicationContext().getAssets().open(imageName)) {
                     Drawable drawable = Drawable.createFromStream(inputStream, null);
                     tmp.add(drawable);
+                    tmpID.add(imgNum);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             ans.add(tmp);
+            ides.add(tmpID);
         }
         return ans;
     }
+
 
     private void fillGrid(TableLayout tableLayout, List<ArrayList<Drawable>> pieces) {
 
@@ -99,7 +107,8 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puzzle);
         tableLayout = findViewById(R.id.puzzleGrid);
-        pieces = makeDrawabls(getIntent().getStringExtra("LevelName").toString()+"/");
+        Log.d(DEBUG_TAG, getIntent().getStringExtra("LevelName").toString() + "/");
+        pieces = makeDrawabls(getIntent().getStringExtra("LevelName").toString() + "/");
         Button playButton = findViewById(R.id.backButton);
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,6 +139,7 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
                         if (deltaX > 0) {
                             if (Y < 3) {
                                 Collections.swap(pieces.get(X), Y, Y + 1);
+                                Collections.swap(ides.get(X), Y, Y + 1);
                                 Y++;
 
 
@@ -138,18 +148,26 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
 
                             if (Y > 0) {
                                 Collections.swap(pieces.get(X), Y, Y - 1);
+                                Collections.swap(ides.get(X), Y, Y - 1);
+
                                 Y--;
 
                             }
                         }
                     } else {
                         Drawable tmp = pieces.get(X).get(Y).getConstantState().newDrawable();
+                        Integer tmpID = ides.get(X).get(Y);
+
                         if (deltaY > 0) {
 
 
                             if (X < 3) {
                                 pieces.get(X).set(Y, pieces.get(X + 1).get(Y));
                                 pieces.get(X + 1).set(Y, tmp);
+                                ides.get(X).set(Y, ides.get(X + 1).get(Y));
+                                ides.get(X + 1).set(Y, tmpID);
+
+
                                 X++;
                             }
                         } else {
@@ -158,16 +176,49 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
 
                                 pieces.get(X).set(Y, pieces.get(X - 1).get(Y));
                                 pieces.get(X - 1).set(Y, tmp);
+                                ides.get(X).set(Y, ides.get(X - 1).get(Y));
+                                ides.get(X - 1).set(Y, tmpID);
                                 X--;
                             }
                         }
                     }
-                    Log.d(DEBUG_TAG, String.valueOf(X) + String.valueOf(Y));
+//                    Log.d(DEBUG_TAG, String.valueOf(X) + String.valueOf(Y));
+
+
                     fillGrid(tableLayout, pieces);
+                    if (checkWin()){
+                        finish();
+                        Toast toast = Toast.makeText(getApplicationContext(),"Вы прошли уровень!!!", Toast.LENGTH_LONG);
+                        toast.show();
+                    }
                 }
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+    private void debugIdes() {
+        for (int i = 0; i < 4; i++) {
+            StringBuilder tmpS = new StringBuilder();
+            for (int j = 0; j < 4; j++) {
+                tmpS.append(ides.get(i).get(j).toString()).append(' ');
+            }
+            Log.d(DEBUG_TAG, tmpS.toString());
+        }
+    }
+
+    private boolean checkWin() {
+
+        Integer num = 1;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (!ides.get(i).get(j).equals(num)) return false;
+                num++;
+            }
+        }
+
+        return true;
+
     }
 
     @Override
