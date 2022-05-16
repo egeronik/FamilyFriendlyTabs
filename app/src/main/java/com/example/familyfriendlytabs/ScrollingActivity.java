@@ -50,9 +50,6 @@ public class ScrollingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityScrollingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-//        Toolbar toolbar = binding.toolbar;
-//        setSupportActionBar(toolbar);
-//        toolbar.setTitle(getTitle());
         listView = findViewById(R.id.lvlNameView);
         names = new ArrayList<String>(
                 Arrays.asList("LolWTF",
@@ -70,7 +67,7 @@ public class ScrollingActivity extends AppCompatActivity {
         nude = new ArrayList<String>(
                 Arrays.asList("Не надо, семпай",
                         "Заправка",
-                        "Megane",
+                        "Пайзури",
                         "Даблкилл",
                         "Blindfold",
                         "Сахарная пудра",

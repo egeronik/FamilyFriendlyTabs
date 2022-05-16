@@ -20,6 +20,8 @@
             android:padding="@dimen/puzzle_layout_padding">
 
             <TableRow
+                android:weightSum="100"
+                android:layout_weight="25"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
 
@@ -27,8 +29,8 @@
                     android:id="@+id/imageView0"
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
+                    android:layout_weight="25"
                     android:scaleType="fitXY"
-
                     tools:srcCompat="@tools:sample/avatars" />
 
                 <ImageView
@@ -36,6 +38,7 @@
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
                     android:scaleType="fitXY"
+                    android:layout_weight="25"
                     tools:srcCompat="@tools:sample/avatars" />
 
                 <ImageView
@@ -43,6 +46,7 @@
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
                     android:scaleType="fitXY"
+                    android:layout_weight="25"
                     tools:srcCompat="@tools:sample/avatars" />
 
                 <ImageView
@@ -50,18 +54,21 @@
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
                     android:scaleType="fitXY"
+                    android:layout_weight="25"
                     tools:srcCompat="@tools:sample/avatars" />
             </TableRow>
 
             <TableRow
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
-
+                android:weightSum="100"
+                android:layout_weight="25"
                 <ImageView
                     android:id="@+id/imageView4"
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
                     android:scaleType="fitXY"
+                    android:layout_weight="25"
                     tools:srcCompat="@tools:sample/avatars" />
 
                 <ImageView
@@ -69,6 +76,7 @@
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
                     android:scaleType="fitXY"
+                    android:layout_weight="25"
                     tools:srcCompat="@tools:sample/avatars" />
 
                 <ImageView
@@ -76,6 +84,7 @@
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
                     android:scaleType="fitXY"
+                    android:layout_weight="25"
                     tools:srcCompat="@tools:sample/avatars" />
 
                 <ImageView
@@ -83,18 +92,21 @@
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
                     android:scaleType="fitXY"
+                    android:layout_weight="25"
                     tools:srcCompat="@tools:sample/avatars" />
             </TableRow>
 
             <TableRow
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
-
+                android:weightSum="100"
+                android:layout_weight="25"
                 <ImageView
                     android:id="@+id/imageView25"
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
                     android:scaleType="fitXY"
+                    android:layout_weight="25"
                     tools:srcCompat="@tools:sample/avatars" />
 
                 <ImageView
@@ -102,6 +114,7 @@
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
                     android:scaleType="fitXY"
+                    android:layout_weight="25"
                     tools:srcCompat="@tools:sample/avatars" />
 
                 <ImageView
@@ -109,6 +122,7 @@
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
                     android:scaleType="fitXY"
+                    android:layout_weight="25"
                     tools:srcCompat="@tools:sample/avatars" />
 
                 <ImageView
@@ -116,18 +130,21 @@
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
                     android:scaleType="fitXY"
+                    android:layout_weight="25"
                     tools:srcCompat="@tools:sample/avatars" />
             </TableRow>
 
             <TableRow
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
-
+                android:weightSum="100"
+                android:layout_weight="25"
                 <ImageView
                     android:id="@+id/imageView29"
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
                     android:scaleType="fitXY"
+                    android:layout_weight="25"
                     tools:srcCompat="@tools:sample/avatars" />
 
                 <ImageView
@@ -135,6 +152,7 @@
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
                     android:scaleType="fitXY"
+                    android:layout_weight="25"
                     tools:srcCompat="@tools:sample/avatars" />
 
                 <ImageView
@@ -142,6 +160,7 @@
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
                     android:scaleType="fitXY"
+                    android:layout_weight="25"
                     tools:srcCompat="@tools:sample/avatars" />
 
                 <ImageView
@@ -149,6 +168,7 @@
                     android:layout_width="@dimen/puzzle_piece_size"
                     android:layout_height="@dimen/puzzle_piece_size"
                     android:scaleType="fitXY"
+                    android:layout_weight="25"
                     tools:srcCompat="@tools:sample/avatars" />
             </TableRow>
         </TableLayout>
@@ -157,6 +177,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
+
+
+
 
         <LinearLayout
             android:id="@+id/bottonLayout"

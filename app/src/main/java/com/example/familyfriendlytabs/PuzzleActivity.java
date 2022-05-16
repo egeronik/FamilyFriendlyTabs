@@ -3,6 +3,7 @@ package com.example.familyfriendlytabs;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -36,6 +37,8 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
     List<ArrayList<Drawable>> pieces;
 
     List<ArrayList<Integer>> ides;
+
+    MediaPlayer mediaPlayer;
 
 
     private List<ArrayList<Drawable>> makeDrawabls(String folderName) {
@@ -107,9 +110,11 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puzzle);
         tableLayout = findViewById(R.id.puzzleGrid);
+        getSupportActionBar().setTitle(getIntent().getStringExtra("LevelTitle"));
         Log.d(DEBUG_TAG, getIntent().getStringExtra("LevelName").toString() + "/");
         pieces = makeDrawabls(getIntent().getStringExtra("LevelName").toString() + "/");
         Button playButton = findViewById(R.id.backButton);
+        mediaPlayer = MediaPlayer.create(this,R.raw.anime_moan_meme);
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -135,14 +140,13 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
                 float deltaX = x2 - x1;
                 float deltaY = y2 - y1;
                 if (Math.abs(deltaX) > MIN_DISTANCE || Math.abs(deltaY) > MIN_DISTANCE) {
+                    mediaPlayer.start();
                     if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                        if (deltaX > 0) {
+                        if (deltaX < 0) {
                             if (Y < 3) {
                                 Collections.swap(pieces.get(X), Y, Y + 1);
                                 Collections.swap(ides.get(X), Y, Y + 1);
                                 Y++;
-
-
                             }
                         } else {
 
@@ -158,7 +162,7 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
                         Drawable tmp = pieces.get(X).get(Y).getConstantState().newDrawable();
                         Integer tmpID = ides.get(X).get(Y);
 
-                        if (deltaY > 0) {
+                        if (deltaY < 0) {
 
 
                             if (X < 3) {
@@ -187,7 +191,6 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
 
                     fillGrid(tableLayout, pieces);
                     if (checkWin()){
-                        finish();
                         Toast toast = Toast.makeText(getApplicationContext(),"Вы прошли уровень!!!", Toast.LENGTH_LONG);
                         toast.show();
                     }

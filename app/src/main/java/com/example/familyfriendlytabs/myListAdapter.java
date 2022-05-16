@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 
 public class myListAdapter extends ArrayAdapter<String> {
     private static final String TAG = "myListAdapter";
@@ -34,7 +35,7 @@ public class myListAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        convertView = inflater.inflate(mResource,parent,false);
+        convertView = inflater.inflate(mResource, parent, false);
 
         TextView nameTv = (TextView) convertView.findViewById(R.id.lvlNameView);
         Button playBtn = (Button) convertView.findViewById(R.id.PlayButton);
@@ -43,14 +44,15 @@ public class myListAdapter extends ArrayAdapter<String> {
         playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG,Integer.toString(position));
+                Log.d(TAG, Integer.toString(position));
                 Intent intent = new Intent(mContext, PuzzleActivity.class);
-                if(position>=mNorm) {
-                    intent.putExtra("LevelName", "H" + Integer.toString(position - mNorm+1));
+                if (position >= mNorm) {
+                    intent.putExtra("LevelName", "H" + Integer.toString(position - mNorm + 1));
 
+                } else {
+                    intent.putExtra("LevelName", "P" + Integer.toString(position));
                 }
-                else
-                    intent.putExtra("LevelName","P"+Integer.toString(position));
+                intent.putExtra("LevelTitle", getItem(position));
                 mContext.startActivity(intent);
             }
         });

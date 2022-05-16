@@ -17,8 +17,9 @@
         <Switch
             android:id="@+id/oneHandSwitch"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Switch" />
+            android:layout_height="wrap_content"
+            android:text="Переключатель счастья"
+            android:layout_gravity="center_vertical"/>
 
 
     </com.google.android.material.appbar.AppBarLayout>

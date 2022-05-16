@@ -1,4 +1,6 @@
 <resources>
     <dimen name="fab_margin">48dp</dimen>
     <dimen name="text_margin">48dp</dimen>
+    <dimen name="puzzle_piece_size">70dp</dimen>
+
 </resources>

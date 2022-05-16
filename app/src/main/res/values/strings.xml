@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FamilyFriendlyTabs</string>
+    <string name="app_name">FFT</string>
     <string name="action_settings">Settings</string>
     <string name="level_button_text">Play</string>
     <string name="puzzle_name">Puzzle 1</string>
