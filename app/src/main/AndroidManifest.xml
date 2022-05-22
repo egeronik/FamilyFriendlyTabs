@@ -10,11 +10,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FamilyFriendlyTabs">
         <activity
-            android:name=".PuzzleActivity"
+            android:name=".SettingsActivity"
             android:exported="false"
-            android:label="@string/puzzle_name"/>
+            android:label="@string/title_activity_settings" />
         <activity
             android:name=".ScrollingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PuzzleActivity"
+            android:exported="false"
+            android:label="@string/puzzle_name" />
+        <activity
+            android:name=".main_menu"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.FamilyFriendlyTabs.NoActionBar">

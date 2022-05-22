@@ -1,5 +1,6 @@
 package com.example.familyfriendlytabs;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -8,11 +9,14 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Debug;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -50,9 +54,10 @@ public class ScrollingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityScrollingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         listView = findViewById(R.id.lvlNameView);
         names = new ArrayList<String>(
-                Arrays.asList("LolWTF",
+                Arrays.asList(
                         "Белый синий",
                         "Ловушка",
                         "Байт",
@@ -95,6 +100,11 @@ public class ScrollingActivity extends AppCompatActivity {
         populateListView();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        populateListView();
+    }
 
     public void populateListView() {
         Log.d("ListDataActivity", "populateListView: dispalying data in listView");

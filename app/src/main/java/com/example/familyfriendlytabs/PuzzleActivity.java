@@ -1,9 +1,13 @@
 package com.example.familyfriendlytabs;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -11,18 +15,27 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class PuzzleActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
 
@@ -41,45 +54,96 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
     MediaPlayer mediaPlayer;
 
 
-    private List<ArrayList<Drawable>> makeDrawabls(String folderName) {
+    private Timer mTimer;
+    private TimerTask mMyTimerTask;
+    private TextView timerView;
+    private long startTime;
+
+
+    private List<ArrayList<Integer>> shuffle(List<ArrayList<Integer>> a, int n) {
         Random random = new Random();
-        List<ArrayList<Drawable>> ans = new ArrayList<>();
+        int x = 3;
+        int y = 3;
+        for (int i = 0; i < n; i++) {
+            int move = random.nextInt(4);
+            int tmp = 0;
+            switch (move) {
+                case 0: //UP
+                    if (y > 0) {
+                        tmp = a.get(x).get(y);
+                        a.get(x).set(y, a.get(x).get(y - 1));
+                        a.get(x).set(y - 1, tmp);
+                        y--;
+                    }
+                    break;
+                case 1: //DOWN
+                    if (y < 3) {
+                        tmp = a.get(x).get(y);
+                        a.get(x).set(y, a.get(x).get(y + 1));
+                        a.get(x).set(y + 1, tmp);
+                        y++;
+                    }
+                    break;
+                case 2: //LEFT
+                    if (x > 0) {
+                        tmp = a.get(x).get(y);
+                        a.get(x).set(y, a.get(x - 1).get(y));
+                        a.get(x - 1).set(y, tmp);
+                        x--;
+                    }
+                    break;
+                case 3: //RIGHT
+                    if (x < 3) {
+                        tmp = a.get(x).get(y);
+                        a.get(x).set(y, a.get(x + 1).get(y));
+                        a.get(x + 1).set(y, tmp);
+                        x++;
+                    }
+                    break;
+            }
+        }
+        return a;
+    }
+
+    private List<ArrayList<Drawable>> makeDrawabls(String folderName) {
+
+
         ides = new ArrayList<>();
-        HashSet<Integer> st = new HashSet<>();
         String imagePattern = "image_part_0";
         int imgNum = 1;
         for (int i = 0; i < 4; i++) {
-            ArrayList<Drawable> tmp = new ArrayList<>();
             ArrayList<Integer> tmpID = new ArrayList<>();
             for (int j = 0; j < 4; j++) {
-                String imageName;
-                if (i == 3 && j == 3) {
-                    imgNum = 16;
-                } else {
-                    imgNum = 1 + random.nextInt(15);
-                    while (st.contains(imgNum)) {
-                        imgNum = 1 + random.nextInt(15);
-                    }
-                }
+                tmpID.add(imgNum);
+                imgNum++;
+            }
+            ides.add(tmpID);
+        }
 
-                Log.d("ImgNum", String.valueOf(imgNum));
-                st.add(imgNum);
+
+        shuffle(ides, 10000);
+
+        List<ArrayList<Drawable>> ans = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            ArrayList<Drawable> tmp = new ArrayList<>();
+
+            for (int j = 0; j < 4; j++) {
+                String imageName;
+                imgNum = ides.get(i).get(j);
                 if (imgNum < 10) {
                     imageName = folderName + imagePattern + '0' + String.valueOf(imgNum) + ".jpg";
                 } else {
                     imageName = folderName + imagePattern + String.valueOf(imgNum) + ".jpg";
                 }
-
                 try (InputStream inputStream = getApplicationContext().getAssets().open(imageName)) {
                     Drawable drawable = Drawable.createFromStream(inputStream, null);
                     tmp.add(drawable);
-                    tmpID.add(imgNum);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             ans.add(tmp);
-            ides.add(tmpID);
+
         }
         return ans;
     }
@@ -89,7 +153,7 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
 
         for (int i = 0; i < pieces.size(); i++) {
 
-            LinearLayout row = (LinearLayout) tableLayout.getChildAt(i); //Maybe kostil
+            LinearLayout row = (LinearLayout) tableLayout.getChildAt(i);
             for (int j = 0; j < pieces.get(i).size(); j++) {
                 ImageView imageView = (ImageView) row.getChildAt(j);
                 imageView.setImageDrawable(null);
@@ -113,8 +177,10 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
         getSupportActionBar().setTitle(getIntent().getStringExtra("LevelTitle"));
         Log.d(DEBUG_TAG, getIntent().getStringExtra("LevelName").toString() + "/");
         pieces = makeDrawabls(getIntent().getStringExtra("LevelName").toString() + "/");
-        Button playButton = findViewById(R.id.backButton);
-        mediaPlayer = MediaPlayer.create(this,R.raw.anime_moan_meme);
+        ImageButton playButton = findViewById(R.id.backButton);
+        ImageButton shuffleButton = findViewById(R.id.shuffleButton);
+        timerView = findViewById(R.id.timerView);
+        mediaPlayer = MediaPlayer.create(this, R.raw.anime_moan_meme);
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,8 +188,54 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
             }
         });
 
+        shuffleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                X = 3;
+                Y = 3;
+                pieces = makeDrawabls(getIntent().getStringExtra("LevelName").toString() + "/");
+                fillGrid(tableLayout, pieces);
+                startTimer();
+                SharedPreferences sharedPreferences = getSharedPreferences("levelLIst", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean(getIntent().getStringExtra("LevelName"), true);
+                editor.apply();
+            }
+        });
         fillGrid(tableLayout, pieces);
 
+
+        startTimer();
+
+
+    }
+
+    private void startTimer() {
+        if (mTimer != null)
+            mTimer.cancel();
+
+
+        startTime = System.currentTimeMillis();
+        mTimer = new Timer();
+        mMyTimerTask = new TimerTask() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void run() {
+                Date date = Calendar.getInstance().getTime();
+
+                runOnUiThread(new Runnable() {
+
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void run() {
+                        long time = System.currentTimeMillis() - startTime;
+                        timerView.setText(Long.toString(time / 1000));
+                    }
+                });
+            }
+        };
+
+        mTimer.schedule(mMyTimerTask, 0, 100);
     }
 
 
@@ -190,9 +302,13 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
 
 
                     fillGrid(tableLayout, pieces);
-                    if (checkWin()){
-                        Toast toast = Toast.makeText(getApplicationContext(),"Вы прошли уровень!!!", Toast.LENGTH_LONG);
+                    if (checkWin()) {
+                        Toast toast = Toast.makeText(getApplicationContext(), "Вы прошли уровень!!!", Toast.LENGTH_LONG);
                         toast.show();
+                        SharedPreferences sharedPreferences = getSharedPreferences("levelLIst", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean(getIntent().getStringExtra("LevelName"), true);
+                        editor.apply();
                     }
                 }
                 break;

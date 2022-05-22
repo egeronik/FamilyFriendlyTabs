@@ -25,11 +25,24 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
+        <ImageView
+            android:id="@+id/passedImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+
+            android:contentDescription="@string/level_is_passed" />
+
+        <Space
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.1" />
+
         <Button
             android:id="@+id/PlayButton"
             android:layout_width="@dimen/level_button_width"
             android:layout_height="wrap_content"
-            android:text="@string/level_button_text" />
+            android:text="@string/level_button_text"
+            />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
