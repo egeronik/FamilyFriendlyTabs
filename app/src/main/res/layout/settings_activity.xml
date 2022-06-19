@@ -1,9 +1,54 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/settings"
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/leftHandModeSwitch"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:minHeight="@dimen/settingsParameterMinHeight"
+        android:text="@string/settingsSwitchText0" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/darkThemeSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:minHeight="@dimen/settingsParameterMinHeight"
+        android:text="@string/settingsSwitchText2" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/hentaiModeSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:minHeight="@dimen/settingsParameterMinHeight"
+        android:text="@string/settingsSwitchText1" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/boyNextDoorSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:minHeight="@dimen/settingsParameterMinHeight"
+        android:text="@string/settingsSwitchText4" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+
+    <ImageButton
+        android:id="@+id/backSettingsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/back_button"
+        app:srcCompat="@drawable/ic_arrow_back" />
+
+
 </LinearLayout>

@@ -7,7 +7,7 @@
     <string name="back_button">back button</string>
     <string name="shuffle_button">shuffle button</string>
     <string name="level_is_passed">level is passed</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_settings">Настройки</string>
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
@@ -23,4 +23,10 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="settings">Settings</string>
+    <string name="play">Play</string>
+    <string name="settingsSwitchText1">То зачем ты меня скачал</string>
+    <string name="settingsSwitchText2">Темная тема</string>
+    <string name="settingsSwitchText4">♂️Right mode♂️</string>
+    <string name="settingsSwitchText0">Режим левши</string>
 </resources>

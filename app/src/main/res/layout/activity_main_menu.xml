@@ -1,26 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main_menu">
+    tools:context=".main_menu"
+
+    android:id="@+id/bgnd"
+    >
 
     <Button
         android:id="@+id/playLevelButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
+        android:layout_marginTop="440dp"
         android:onClick="showLevels"
-        android:text="Play" />
+        android:text="@string/play" />
 
     <Button
         android:id="@+id/settingsButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/playLevelButton"
-        android:layout_marginTop="40dp"
-        android:text="Settings" />
+        android:layout_marginTop="46dp"
+        android:onClick="showSettings"
+        android:text="@string/settings" />
 
 
 </RelativeLayout>

@@ -6,5 +6,6 @@
     <dimen name="level_button_width">120dp</dimen>
     <dimen name="puzzle_piece_size">100dp</dimen>
     <dimen name="puzzle_layout_padding">10dp</dimen>
+    <dimen name="settingsParameterMinHeight">48dp</dimen>
 
 </resources>

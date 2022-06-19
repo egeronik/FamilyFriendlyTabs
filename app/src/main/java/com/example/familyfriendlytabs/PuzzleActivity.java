@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -13,8 +15,6 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,17 +22,15 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Time;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,14 +51,29 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
 
     MediaPlayer mediaPlayer;
 
+    AssetFileDescriptor assetFileDescriptor;
 
     private Timer mTimer;
-    private TimerTask mMyTimerTask;
     private TextView timerView;
     private long startTime;
 
+    SharedPreferences sharedPref;
+    SharedPreferences.Editor editor;
 
-    private List<ArrayList<Integer>> shuffle(List<ArrayList<Integer>> a, int n) {
+    Random random;
+
+    boolean isReleased = true;
+
+    private enum soundType {
+        MOVE,
+        START,
+        WIN,
+        ENTER,
+        GACHI_ENTER,
+        GACHI_MOVE
+    }
+
+    private void shuffle(List<ArrayList<Integer>> a, int n) {
         Random random = new Random();
         int x = 3;
         int y = 3;
@@ -102,12 +115,11 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
                     break;
             }
         }
-        return a;
     }
 
     private List<ArrayList<Drawable>> makeDrawabls(String folderName) {
 
-
+        folderName = "levelParts/" + folderName;
         ides = new ArrayList<>();
         String imagePattern = "image_part_0";
         int imgNum = 1;
@@ -122,7 +134,7 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
 
 
         shuffle(ides, 10000);
-
+        debugIdes();
         List<ArrayList<Drawable>> ans = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             ArrayList<Drawable> tmp = new ArrayList<>();
@@ -130,6 +142,10 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
             for (int j = 0; j < 4; j++) {
                 String imageName;
                 imgNum = ides.get(i).get(j);
+                if (imgNum == 16) {
+                    X = i;
+                    Y = j;
+                }
                 if (imgNum < 10) {
                     imageName = folderName + imagePattern + '0' + String.valueOf(imgNum) + ".jpg";
                 } else {
@@ -173,6 +189,9 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puzzle);
+        sharedPref = this.getSharedPreferences("settings", MODE_PRIVATE);
+        editor = sharedPref.edit();
+        //TODO StartSound
         tableLayout = findViewById(R.id.puzzleGrid);
         getSupportActionBar().setTitle(getIntent().getStringExtra("LevelTitle"));
         Log.d(DEBUG_TAG, getIntent().getStringExtra("LevelName").toString() + "/");
@@ -180,7 +199,8 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
         ImageButton playButton = findViewById(R.id.backButton);
         ImageButton shuffleButton = findViewById(R.id.shuffleButton);
         timerView = findViewById(R.id.timerView);
-        mediaPlayer = MediaPlayer.create(this, R.raw.anime_moan_meme);
+        random = new Random();
+        mediaPlayer = new MediaPlayer();
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -196,10 +216,6 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
                 pieces = makeDrawabls(getIntent().getStringExtra("LevelName").toString() + "/");
                 fillGrid(tableLayout, pieces);
                 startTimer();
-                SharedPreferences sharedPreferences = getSharedPreferences("levelLIst", MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean(getIntent().getStringExtra("LevelName"), true);
-                editor.apply();
             }
         });
         fillGrid(tableLayout, pieces);
@@ -210,6 +226,7 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
 
     }
 
+
     private void startTimer() {
         if (mTimer != null)
             mTimer.cancel();
@@ -217,7 +234,7 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
 
         startTime = System.currentTimeMillis();
         mTimer = new Timer();
-        mMyTimerTask = new TimerTask() {
+        TimerTask mMyTimerTask = new TimerTask() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void run() {
@@ -252,7 +269,34 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
                 float deltaX = x2 - x1;
                 float deltaY = y2 - y1;
                 if (Math.abs(deltaX) > MIN_DISTANCE || Math.abs(deltaY) > MIN_DISTANCE) {
-                    mediaPlayer.start();
+                    AssetFileDescriptor descriptor;
+                    if (sharedPref.getBoolean("gachiMode", false)) {
+                        descriptor = getRandomSound(soundType.GACHI_MOVE);
+                    } else {
+                        descriptor = getRandomSound(soundType.MOVE);
+                    }
+
+                    if (descriptor != null  && isReleased) {
+
+                        mediaPlayer = new MediaPlayer();
+                        try {
+                            mediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
+                            mediaPlayer.prepare();
+                            mediaPlayer.start();
+                            isReleased=false;
+                            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                @Override
+                                public void onCompletion(MediaPlayer mediaPlayer) {
+                                    mediaPlayer.release();
+                                    isReleased=true;
+                                }
+                            });
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+
                     if (Math.abs(deltaX) > Math.abs(deltaY)) {
                         if (deltaX < 0) {
                             if (Y < 3) {
@@ -303,17 +347,75 @@ public class PuzzleActivity extends AppCompatActivity implements GestureDetector
 
                     fillGrid(tableLayout, pieces);
                     if (checkWin()) {
+                        descriptor = getRandomSound(soundType.WIN);
+                        if (descriptor != null) {
+                            mediaPlayer = new MediaPlayer();
+                            try {
+                                mediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
+                                mediaPlayer.prepare();
+                                mediaPlayer.start();
+                                isReleased=false;
+                                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                    @Override
+                                    public void onCompletion(MediaPlayer mediaPlayer) {
+                                        mediaPlayer.release();
+                                        isReleased=true;
+                                    }
+                                });
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        mTimer.cancel();
                         Toast toast = Toast.makeText(getApplicationContext(), "Вы прошли уровень!!!", Toast.LENGTH_LONG);
                         toast.show();
                         SharedPreferences sharedPreferences = getSharedPreferences("levelLIst", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putBoolean(getIntent().getStringExtra("LevelName"), true);
                         editor.apply();
+
                     }
                 }
                 break;
         }
+
         return super.onTouchEvent(event);
+    }
+
+    private AssetFileDescriptor getRandomSound(soundType type) {
+        String soundFolder = "sounds";
+        switch (type) {
+            case MOVE:
+                soundFolder += "/moveTileSounds";
+                break;
+            case START:
+                soundFolder += "/startGameSounds";
+                break;
+            case WIN:
+                soundFolder += "/youWinSounds";
+                break;
+            case ENTER:
+                soundFolder += "/modeChangeSounds";
+                break;
+            case GACHI_ENTER:
+                soundFolder += "/gachiChangeSounds";
+                break;
+            case GACHI_MOVE:
+                soundFolder += "/gachiMoveSounds";
+
+        }
+        AssetManager manager = getAssets();
+        try {
+            int l = manager.list(soundFolder).length;
+            String name = manager.list(soundFolder)[random.nextInt(l)];
+            AssetFileDescriptor assetFileDescriptor;
+            assetFileDescriptor = getAssets().openFd(soundFolder + "/" + name);
+            return assetFileDescriptor;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private void debugIdes() {
